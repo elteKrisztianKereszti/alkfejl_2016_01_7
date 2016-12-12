@@ -262,6 +262,26 @@ class RecipeController {
       response.notFound('Recipe not found.')
     }
   }
+  
+  * ajaxDelete(request, response) {
+    const id = request.param('id');
+    const recipe = yield Recipe.find(id);
+
+    if (recipe) {
+      if (request.currentUser.id !== recipe.user_id) {
+        response.unauthorized('Access denied.')
+        return
+      }
+
+     yield recipe.delete()
+      response.ok({
+        success: true
+      })
+      return
+    }
+    
+    response.notFound('No recipe')
+  }
 }
 
 function fileExists(fileName) {
